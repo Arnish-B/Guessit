@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Test</title>
+    <!-- Include Socket.io client library from CDN -->
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Test Socket.io Events</h1>
+
+    <div>
+        <label for="roomId">Room ID: </label>
+        <input type="text" id="roomId" placeholder="Enter Room ID">
+    </div>
+    
+    <div>
+        <label for="username">Username: </label>
+        <input type="text" id="username" placeholder="Enter Username">
+    </div>
+
+    <button id="joinRoomBtn">Join Room</button>
+    <button id="startVote">Start Vote</button>
+    <button id="startGame">Start Game</button>
+    <h2>Messages:</h2>
+    <div id="messages"></div>
+
+    <script>
+        const socket = io('http://localhost:3000'); // Connect to the server
+        const messagesDiv = document.getElementById('messages');
+
+        //event listener for start vote button
+        document.getElementById('startVote').addEventListener('click',()=>{
+            const roomId = document.getElementById('roomId').value;
+            console.log("start vote button clicked "+roomId);
+            socket.emit('startVote',roomId);
+        });
+
+        // event listener for start game button
+        document.getElementById('startGame').addEventListener('click',()=>{
+            const roomId = document.getElementById('roomId').value;
+            console.log("start game button clicked "+roomId);
+            socket.emit('startGame',roomId);
+        });
+        // Event listener for the "Join Room" button
+        document.getElementById('joinRoomBtn').addEventListener('click', () => {
+            const roomId = document.getElementById('roomId').value;
+            const username = document.getElementById('username').value;
+
+            if (roomId && username) {
+                socket.emit('joinRoom', roomId, username);  // Emit joinRoom event to the server
+            } else {
+                alert('Please enter both Room ID and Username');
+            }
+        });
+
+        // Listen for the 'joinedRoom' event from the server
+        socket.on('joinedRoom', (roomId, username) => {
+            const message = `Successfully joined room ${roomId} as ${username}`;
+            displayMessage(message);
+        });
+        
+        // Listen for the 'newPlayerJoined' event from the server
+        socket.on('newPlayerJoined', (username) => {
+            console.log("listening");
+            const message = `${username} has joined the room!`;
+            displayMessage(message);
+        });
+        socket.on('beginVote',(options)=>{
+            const message="availabl options are "+options;
+            displayMessage(message);
+            console.log(options);
+        })
+
+        // listen for youDenner event
+        socket.on('youDenner',(options)=>{
+            const message="you are the denner, available options are "+options;
+            displayMessage(message);
+            console.log(options);
+        })
+        // Listen for 'error' event from the server
+        socket.on('error', (message) => {
+            displayMessage(`Error: ${message}`);
+        });
+
+        // Helper function to display messages in the UI
+        function displayMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+        }
+    </script>
+</body>
+</html>
