@@ -45,7 +45,7 @@ const LandingPage: React.FC = () => {
     <div className="flex items-center justify-center h-screen bg-gray-900">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-8 flex items-center justify-center">
-          Welcome To Guessit!!
+          Welcome To Guessit!
           <GoInfo className="ml-2 w-4 mb-4" onClick={handleInfoClick} />
         </h1>
         <div className="space-y-4">
