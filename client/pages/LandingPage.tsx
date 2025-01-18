@@ -25,7 +25,7 @@ const LandingPage: React.FC = () => {
 
   const handleCreateRoomClick = () => {
     axios
-      .get("http://localhost:3000/room/create/")
+      .get("http://localhost:3000/room/create")
       .then((response) => {
         console.log(response.data.roomId);
         setRoomId(response.data.roomId);
