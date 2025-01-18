@@ -40,12 +40,31 @@
         document.getElementById('startVote').addEventListener('click', () => {
             const roomId = document.getElementById('roomId').value;
             console.log("start vote button clicked " + roomId);
+            var options = prompt("Enter the options separated by comma");
             socket.emit('startVote', roomId);
+            var options = prompt("Enter the options separated by comma");
         });
 
         // event listener for start game button
         document.getElementById('startGame').addEventListener('click', () => {
             const roomId = document.getElementById('roomId').value;
+
+            // create an input feild to enter the theword to guess and a button to submit the word
+            const wordInput = document.createElement('input');
+            wordInput.type = 'text';
+            wordInput.id = 'word';
+            wordInput.placeholder = 'Enter the word to guess';
+            document.body.appendChild(wordInput);
+
+            const submitWordBtn = document.createElement('button');
+            submitWordBtn.textContent = 'Submit Word';
+            document.body.appendChild(submitWordBtn);
+            submitWordBtn.addEventListener('click', () => {
+                const word = document.getElementById('word').value;
+                console.log("submit word button clicked " + roomId);
+                socket.emit('setWord', roomId, word);
+            });
+
             console.log("start game button clicked " + roomId);
             socket.emit('startGame', roomId);
         });

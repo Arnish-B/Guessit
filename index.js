@@ -55,13 +55,20 @@ io.on("connection", (socket) => {
       // Start the game logic here
       const options = room.beginVote(roomId);
       console.log(options);
-      io.to(roomId).local.emit("beginVote", Object.fromEntries(options));
+      io.to(roomId).emit("beginVote", Object.fromEntries(options));
     } else {
       // Room does not exist
       socket.emit("error", "Room not found");
     }
   });
-
+  socket.on("setWord", (roomId, word) => {
+    if (rooms.has(roomId)) {
+      const room = rooms.get(roomId);
+      room.setWord(word);
+    } else {
+      console.error(`Room with ID ${roomId} not found`);
+    }
+  });
   socket.on("startGame", (roomId) => {
     if (rooms.has(roomId)) {
       const room = rooms.get(roomId);

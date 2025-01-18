@@ -7,6 +7,8 @@ export function getDenner(room){
 
     return player;
 }
-
+export function setWord(room,word){
+    room.word=word;
+}
 
 

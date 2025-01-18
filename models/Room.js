@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import {add_to_options,get_options,vote,reset_options,get_option_winner} from '../controller/voteLogic.js'
 
-import { getDenner } from '../controller/gameLogic.js';
+import { getDenner,setWord } from '../controller/gameLogic.js';
 class Room {
     constructor(roomId) {
         this.roomId = roomId;
@@ -15,8 +15,13 @@ class Room {
     }
 
     checkGuess(guess) {
-        if(guess==="Apple"){
-            return true;
+        if(this.word){
+            if(guess===this.word){
+                return true;
+            }
+        }
+        else{
+            console.log("Word not set");
         }
         return false;
     }
@@ -55,6 +60,9 @@ class Room {
     }
     beginGame(room){
        return getDenner(room);
+    }
+    setWord(word){
+        setWord(this,word);
     }
 }
 
