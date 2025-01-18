@@ -14,6 +14,13 @@ class Room {
         return this.hints;
     }
 
+    checkGuess(guess) {
+        if(guess==="Apple"){
+            return true;
+        }
+        return false;
+    }
+
     // Method to add a hint to the room
     addHint(playerId, hint) {
         this.hints.push({ playerId,hint });

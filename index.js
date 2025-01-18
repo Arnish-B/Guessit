@@ -87,6 +87,31 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("submitHint", (roomId,username, hint) => {
+    if (rooms.has(roomId)) {
+      const room = rooms.get(roomId);
+      room.addHint(username,hint);
+        io.to(roomId).emit("newHint", hint);
+    } else {
+      console.error(`Room with ID ${roomId} not found`);
+    }
+  });
+
+  socket.on("submitGuess", (roomId, guess) => {
+    if (rooms.has(roomId)) {
+      const room = rooms.get(roomId);
+      // Check if guess is correct
+      if (room.checkGuess(guess)) {
+        // Emit to all players that the guess is correct
+        io.to(roomId).emit("correctGuess", guess);
+      } else {
+        // Emit to the player that their guess is incorrect
+        io.to(roomId).emit("incorrectGuess", guess);
+      }
+    } else {
+      console.error(`Room with ID ${roomId} not found`);
+    }
+  });
   // Handle player disconnection
   socket.on("disconnect", () => {
     console.log(`Player disconnected: ${socket.id}`);

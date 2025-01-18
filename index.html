@@ -17,6 +17,7 @@
     <div>
         <label for="roomId">Room ID: </label>
         <input type="text" id="roomId" placeholder="Enter Room ID">
+        <input type="text" id="hint" placeholder="Enter Hint">
     </div>
 
     <div>
@@ -27,6 +28,7 @@
     <button id="joinRoomBtn">Join Room</button>
     <button id="startVote">Start Vote</button>
     <button id="startGame">Start Game</button>
+    <button id="submitHint">Submit Hint</button>
     <h2>Messages:</h2>
     <div id="messages"></div>
 
@@ -58,6 +60,19 @@
                 alert('Please enter both Room ID and Username');
             }
         });
+        function guessSubmitter(){
+            const roomId = document.getElementById('roomId').value;
+            const guess = document.getElementById('guess').value;
+            console.log("submit guess button clicked " + roomId);
+            socket.emit('submitGuess', roomId, guess);
+        }
+        document.getElementById('submitHint').addEventListener('click', () => {
+            const roomId = document.getElementById('roomId').value;
+            const hint = document.getElementById('hint').value;
+            const username=document.getElementById('username').value;
+            console.log("submit hint button clicked " + roomId);
+            socket.emit('submitHint', roomId,username, hint);
+        });
 
         // Listen for the 'joinedRoom' event from the server
         socket.on('joinedRoom', (roomId, username) => {
@@ -82,10 +97,38 @@
             const message = "you are the denner, available options are " + options;
             displayMessage(message);
             console.log(options);
+
+            //add a text box to enter the guess
+            const guessInput = document.createElement('input');
+            guessInput.type = 'text';
+            guessInput.id = 'guess';
+            guessInput.placeholder = 'Enter your guess';
+            document.body.appendChild(guessInput);
+            
+            //add a button to submit the guess
+            const submitGuessBtn = document.createElement('button');
+            submitGuessBtn.textContent = 'Submit Guess';
+            document.body.appendChild(submitGuessBtn);
+            submitGuessBtn.addEventListener('click', guessSubmitter);
+
         })
         // Listen for 'error' event from the server
         socket.on('error', (message) => {
             displayMessage(`Error: ${message}`);
+        });
+        socket.on('newHint', (hint) => {
+            const message = `Hint submitted: ${hint}`;
+            displayMessage(message);
+        });
+
+        socket.on('correctGuess', (guess) => {
+            const message = `Correct guess: ${guess}`;
+            displayMessage(message);
+        });
+
+        socket.on('incorrectGuess', (guess) => {
+            const message = `Incorrect guess: ${guess}`;
+            displayMessage(message);
         });
 
         // Helper function to display messages in the UI
